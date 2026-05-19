@@ -13,6 +13,7 @@ set (TARGET_HEADERS
 	${HEADER_PATH}/soloud_bassboostfilter.h
 	${HEADER_PATH}/soloud_biquadresonantfilter.h
 	${HEADER_PATH}/soloud_bus.h
+	${HEADER_PATH}/soloud_c.h
 	${HEADER_PATH}/soloud_dcremovalfilter.h
 	${HEADER_PATH}/soloud_echofilter.h
 	${HEADER_PATH}/soloud_error.h
