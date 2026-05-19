@@ -1,4 +1,4 @@
-set (TARGET_NAME soloud)
+set (TARGET_NAME SoLoud)
 
 set (HEADER_PATH ../include)
 set (SOURCE_PATH ../src)
@@ -192,18 +192,18 @@ if (SOLOUD_C_API)
 endif()
 
 if (SOLOUD_DYNAMIC)
-	add_library(SoLoud ${TARGET_SOURCES} ${TARGET_HEADERS})
+	add_library(${TARGET_NAME} ${TARGET_SOURCES} ${TARGET_HEADERS})
 	include(GenerateExportHeader)
 	generate_export_header(${TARGET_NAME})
 endif ()
 
 if (SOLOUD_STATIC)
-	add_library(SoLoud STATIC ${TARGET_SOURCES} ${TARGET_HEADERS})
+	add_library(${TARGET_NAME} STATIC ${TARGET_SOURCES} ${TARGET_HEADERS})
 endif()
 
-target_link_libraries (SoLoud ${LINK_LIBRARIES})
+target_link_libraries (${TARGET_NAME} ${LINK_LIBRARIES})
 
-target_include_directories (SoLoud PUBLIC ${HEADER_PATH})
+target_include_directories (${TARGET_NAME} PUBLIC ${HEADER_PATH})
 
 include (Install)
-INSTALL(FILES ${TARGET_HEADERS} DESTINATION include/${TARGET_NAME})
+INSTALL(FILES ${TARGET_HEADERS} DESTINATION include/soloud)
