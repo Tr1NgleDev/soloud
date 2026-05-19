@@ -203,7 +203,11 @@ endif()
 
 target_link_libraries (${TARGET_NAME} ${LINK_LIBRARIES})
 
-target_include_directories (${TARGET_NAME} PUBLIC ${HEADER_PATH})
+target_include_directories (${TARGET_NAME}
+	PUBLIC
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../include>
+		$<INSTALL_INTERFACE:include>
+)
 
 include (Install)
 INSTALL(FILES ${TARGET_HEADERS} DESTINATION include/soloud)
