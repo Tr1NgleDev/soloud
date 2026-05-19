@@ -77,7 +77,6 @@ set (AUDIOSOURCES_SOURCES
 	# ay
 	${AUDIOSOURCES_PATH}/ay/chipplayer.cpp
 	${AUDIOSOURCES_PATH}/ay/chipplayer.h
-	${AUDIOSOURCES_PATH}/ay/readme.txt
 	${AUDIOSOURCES_PATH}/ay/sndbuffer.cpp
 	${AUDIOSOURCES_PATH}/ay/sndbuffer.h
 	${AUDIOSOURCES_PATH}/ay/sndchip.cpp
@@ -136,114 +135,17 @@ set (AUDIOSOURCES_SOURCES
 )
 
 
-# Backends
-# TODO: Other backends
+# Backend (miniaudio)
 set (BACKENDS_PATH ${SOURCE_PATH}/backend)
 set (BACKENDS_SOURCES)
 
-if (SOLOUD_BACKEND_NULL)
-	set (BACKENDS_SOURCES
-		${BACKENDS_SOURCES}
-		${BACKENDS_PATH}/null/soloud_null.cpp
-	)
-	add_definitions(-DWITH_NULL)
-endif()
+add_definitions (-DWITH_MINIAUDIO)
 
-if (SOLOUD_BACKEND_SDL2)
-	find_package (SDL2 REQUIRED)
-	include_directories (${SDL2_INCLUDE_DIR})
-	add_definitions (-DWITH_SDL2_STATIC)
-
-	set (BACKENDS_SOURCES
-		${BACKENDS_SOURCES}
-		${BACKENDS_PATH}/sdl2_static/soloud_sdl2_static.cpp
-	)
-
-	set (LINK_LIBRARIES
-		${LINK_LIBRARIES}
-		${SDL2_LIBRARY}
-	)
-
-endif()
-
-if (SOLOUD_BACKEND_ALSA)                     
-    add_definitions (-DWITH_ALSA)                
-                                           
-    set (BACKENDS_SOURCES              
-        ${BACKENDS_SOURCES} 
-        ${BACKENDS_PATH}/alsa/soloud_alsa.cpp
-    )                                              
-
-    find_library (ALSA_LIBRARY asound)
-    set (LINK_LIBRARIES
-        ${LINK_LIBRARIES}
-        ${ALSA_LIBRARY}
-    )
-endif()
-
-
-if (SOLOUD_BACKEND_COREAUDIO)
-	if (NOT APPLE)
-		message (FATAL_ERROR "CoreAudio backend can be enabled only on Apple!")
-	endif ()
-
-	add_definitions (-DWITH_COREAUDIO)
-
-	set (BACKENDS_SOURCES
-		${BACKENDS_SOURCES}
-		${BACKENDS_PATH}/coreaudio/soloud_coreaudio.cpp
-	)
-
-	find_library (AUDIOTOOLBOX_FRAMEWORK AudioToolbox)
-	set (LINK_LIBRARIES
-		${LINK_LIBRARIES}
-		${AUDIOTOOLBOX_FRAMEWORK}
-	)
-endif()
-
-
-if (SOLOUD_BACKEND_OPENSLES)
-	add_definitions (-DWITH_OPENSLES)
-
-	set (BACKENDS_SOURCES
-		${BACKENDS_SOURCES}
-		${BACKENDS_PATH}/opensles/soloud_opensles.cpp
-	)
-
-	find_library (OPENSLES_LIBRARY OpenSLES)
-	set (LINK_LIBRARIES
-		${LINK_LIBRARIES}
-		${OPENSLES_LIBRARY}
-	)
-endif()
-
-
-if (SOLOUD_BACKEND_XAUDIO2)
-	add_definitions (-DWITH_XAUDIO2)
-
-	set (BACKENDS_SOURCES
-		${BACKENDS_SOURCES}
-		${BACKENDS_PATH}/xaudio2/soloud_xaudio2.cpp
-	)
-endif()
-
-if (SOLOUD_BACKEND_WINMM)
-	add_definitions (-DWITH_WINMM)
-
-	set (BACKENDS_SOURCES
-		${BACKENDS_SOURCES}
-		${BACKENDS_PATH}/winmm/soloud_winmm.cpp
-	)
-endif()
-
-if (SOLOUD_BACKEND_WASAPI)
-	add_definitions (-DWITH_WASAPI)
-
-	set (BACKENDS_SOURCES
-		${BACKENDS_SOURCES}
-		${BACKENDS_PATH}/wasapi/soloud_wasapi.cpp
-	)
-endif()
+set (BACKENDS_SOURCES
+	${BACKENDS_SOURCES}
+	${BACKENDS_PATH}/miniaudio/miniaudio.h
+	${BACKENDS_PATH}/miniaudio/soloud_miniaudio.cpp
+)
 
 # Filters
 set (FILTERS_PATH ${SOURCE_PATH}/filter)
@@ -251,7 +153,9 @@ set (FILTERS_SOURCES
 	${FILTERS_PATH}/soloud_bassboostfilter.cpp
 	${FILTERS_PATH}/soloud_biquadresonantfilter.cpp
 	${FILTERS_PATH}/soloud_dcremovalfilter.cpp
+	${FILTERS_PATH}/soloud_duckfilter.cpp
 	${FILTERS_PATH}/soloud_echofilter.cpp
+	${FILTERS_PATH}/soloud_eqfilter.cpp
 	${FILTERS_PATH}/soloud_fftfilter.cpp
 	${FILTERS_PATH}/soloud_flangerfilter.cpp
 	${FILTERS_PATH}/soloud_freeverbfilter.cpp
@@ -288,11 +192,13 @@ if (SOLOUD_C_API)
 endif()
 
 if (SOLOUD_DYNAMIC)
-	add_library(${TARGET_NAME} ${TARGET_SOURCES})
+	add_library(${TARGET_NAME} ${TARGET_SOURCES} ${TARGET_HEADERS})
+	include(GenerateExportHeader)
+	generate_export_header(${TARGET_NAME})
 endif ()
 
 if (SOLOUD_STATIC)
-	add_library(${TARGET_NAME} STATIC ${TARGET_SOURCES})
+	add_library(${TARGET_NAME} STATIC ${TARGET_SOURCES} ${TARGET_HEADERS})
 endif()
 
 target_link_libraries (${TARGET_NAME} ${LINK_LIBRARIES})
