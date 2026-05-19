@@ -203,5 +203,7 @@ endif()
 
 target_link_libraries (${TARGET_NAME} ${LINK_LIBRARIES})
 
+target_include_directories (${TARGET_NAME} PUBLIC ${HEADER_PATH})
+
 include (Install)
 INSTALL(FILES ${TARGET_HEADERS} DESTINATION include/${TARGET_NAME})
